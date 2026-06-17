@@ -1,0 +1,178 @@
+
+firebase_options.dart
+lib/core/secrets.dart
+.env
+.env.local
+.env.production
+google-services.json
+GoogleService-Info.plist
+
+
+# ============================================================
+# FLUTTER
+# ============================================================
+
+# Build outputs — generated, never commit these
+/build/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Dart tool cache
+.dart_tool/
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+
+# Pub package cache
+.pub-cache/
+.pub/
+
+# Flutter web build output
+/web/favicon.png
+/web/icons/
+
+# iOS
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/ios/Runner/Assets.xcassets/AppIcon.appiconset/
+**/ios/.generated/
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.h
+**/ios/Runner/GeneratedPluginRegistrant.m
+
+# Android
+**/android/.gradle/
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/GeneratedPluginRegistrant.java
+**/android/key.properties
+**/android/app/google-services.json
+**/android/**/GeneratedPluginRegistrant.java
+
+# macOS
+**/macos/Flutter/GeneratedPluginRegistrant.swift
+**/macos/Flutter/ephemeral/
+
+# Linux
+**/linux/flutter/generated_plugin_registrant.cc
+**/linux/flutter/generated_plugin_registrant.h
+**/linux/flutter/generated_plugins.cmake
+
+# Windows
+**/windows/flutter/generated_plugin_registrant.cc
+**/windows/flutter/generated_plugin_registrant.h
+**/windows/flutter/generated_plugins.cmake
+
+
+# ============================================================
+# FIREBASE
+# ============================================================
+
+# Firebase CLI cache
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+firebase-debug.*.log
+
+# Firebase emulator data
+.firebaserc should NOT be ignored — it's safe to commit
+# But hosting deploy targets with secrets should not be pushed
+
+
+# ============================================================
+# IDEs & EDITORS
+# ============================================================
+
+# VS Code
+.vscode/
+!.vscode/extensions.json
+!.vscode/launch.json
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+*.ipr
+*.iws
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries
+.idea/libraries
+.idea/caches
+.idea/modules.xml
+.idea/runConfigurations
+
+# Vim
+*.swp
+*.swo
+
+# Emacs
+*~
+\#*\#
+
+
+# ============================================================
+# OS FILES
+# ============================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+
+
+# ============================================================
+# LOGS & TEMP FILES
+# ============================================================
+*.log
+*.tmp
+*.temp
+crash.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+
+# ============================================================
+# VIBELAB SPECIFIC
+# ============================================================
+
+# Local audio stems — these are in Firebase Storage
+# Don't push large audio files to git
+assets/audio/*.mp3
+assets/audio/*.wav
+assets/audio/*.ogg
+
+# Keep the folder itself tracked (empty folders need this)
+!assets/audio/.gitkeep
+!assets/images/.gitkeep
+
+# Any local test exports
+*.png
+!assets/images/placeholder.png
