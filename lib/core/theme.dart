@@ -1,8 +1,7 @@
 // ============================================================
-// VibeLab — theme.dart
-// The "Aurora Liquid Canvas" design system.
-// Every color, font, and style decision lives here.
-// Nothing is hardcoded in the widgets — always reference this.
+// VibeLab — theme.dart (UI Refresh: Dark Aurora Brutalist)
+// Lifted dark background, pixel font headings,
+// brutalist borders, lime accent pop color.
 // ============================================================
 
 import 'package:flutter/material.dart';
@@ -12,35 +11,46 @@ class VibeLabTheme {
   VibeLabTheme._();
 
   // ----------------------------------------------------------
-  // CORE PALETTE
-  // Not pure black — cosmic ink with life in it.
-  // Aurora colors shift based on the active vibe mood.
+  // CORE PALETTE — Lifted dark, more breathable
   // ----------------------------------------------------------
-  static const Color cosmicInk = Color(0xFF0A0A14);       // Background
-  static const Color cosmicInkLight = Color(0xFF12121F);  // Surface
-  static const Color cosmicInkLighter = Color(0xFF1A1A2E); // Card surface
+  static const Color cosmicInk = Color(0xFF12121F);        // Lifted background
+  static const Color cosmicInkLight = Color(0xFF1A1A2E);   // Surface
+  static const Color cosmicInkLighter = Color(0xFF202038); // Card surface
+  static const Color cosmicInkCard = Color(0xFF252540);    // Elevated card
 
-  // Aurora accent colors — these shift per mood
+  // ----------------------------------------------------------
+  // ACCENT COLORS
+  // ----------------------------------------------------------
   static const Color auroraPurple = Color(0xFF7B61FF);
   static const Color auroraTeal = Color(0xFF00D4AA);
   static const Color auroraGold = Color(0xFFFFB347);
   static const Color auroraRose = Color(0xFFFF6B9D);
   static const Color auroraCyan = Color(0xFF00E5FF);
-  static const Color auroraGreen = Color(0xFF69FF47);
 
-  // Text colors
-  static const Color textPrimary = Color(0xFFF0F0FF);     // Nearly white with blue tint
-  static const Color textSecondary = Color(0xFF9090B0);   // Muted purple-gray
-  static const Color textHint = Color(0xFF505070);        // Very muted
-
-  // Border colors
-  static const Color borderSubtle = Color(0xFF1E1E35);
-  static const Color borderGlow = Color(0xFF7B61FF);
+  // VibeLab signature lime — the unexpected pop
+  // This is our identity color. Inspired by Pollinations'
+  // yellow-green but made our own.
+  static const Color vibeLime = Color(0xFFC8FF57);
+  static const Color vibeLimeDark = Color(0xFF9ED436);
 
   // ----------------------------------------------------------
-  // MOOD → COLOR MAPPING
-  // When Gemini returns a mood_tag, we map it to aurora colors
-  // This is what makes the background "feel" the vibe
+  // TEXT COLORS
+  // ----------------------------------------------------------
+  static const Color textPrimary = Color(0xFFF0F0FF);
+  static const Color textSecondary = Color(0xFF9090B0);
+  static const Color textHint = Color(0xFF505070);
+  static const Color textDark = Color(0xFF0A0A14); // For text on lime bg
+
+  // ----------------------------------------------------------
+  // BORDERS — Brutalist style uses visible borders
+  // ----------------------------------------------------------
+  static const Color borderSubtle = Color(0xFF2A2A45);
+  static const Color borderNormal = Color(0xFF3A3A60);
+  static const Color borderBold = Color(0xFF7B61FF);
+  static const Color borderLime = Color(0xFFC8FF57);
+
+  // ----------------------------------------------------------
+  // MOOD → AURORA COLOR MAPPING
   // ----------------------------------------------------------
   static const Map<String, List<Color>> moodAuroraMap = {
     'chill': [Color(0xFF4A90D9), Color(0xFF00D4AA), Color(0xFF7B61FF)],
@@ -53,46 +63,43 @@ class VibeLabTheme {
     'corporate': [Color(0xFF2196F3), Color(0xFF00BCD4), Color(0xFF3F51B5)],
   };
 
-  // Default aurora when no mood is detected
   static const List<Color> defaultAurora = [
     Color(0xFF7B61FF),
     Color(0xFF00D4AA),
-    Color(0xFFFF6B9D),
+    Color(0xFFC8FF57),
   ];
 
   // ----------------------------------------------------------
   // TYPOGRAPHY
-  // Display font: Space Grotesk — bold, confident, modern
-  // Body font: Inter — clean, readable, professional
+  // Press Start 2P  → pixel/brutalist font for ALL headings
+  // Inter           → clean readable body text
   // ----------------------------------------------------------
   static TextTheme get textTheme => TextTheme(
-    // Hero headline — the app title, vibe result titles
-    displayLarge: GoogleFonts.spaceGrotesk(
-      fontSize: 48,
-      fontWeight: FontWeight.w700,
+    // Hero — app name, page titles
+    displayLarge: GoogleFonts.pressStart2p(
+      fontSize: 32,
       color: textPrimary,
-      letterSpacing: -1.5,
+      height: 1.4,
     ),
     // Section headlines
-    displayMedium: GoogleFonts.spaceGrotesk(
-      fontSize: 32,
-      fontWeight: FontWeight.w600,
+    displayMedium: GoogleFonts.pressStart2p(
+      fontSize: 20,
       color: textPrimary,
-      letterSpacing: -0.5,
+      height: 1.4,
     ),
-    // Card titles
-    displaySmall: GoogleFonts.spaceGrotesk(
-      fontSize: 24,
-      fontWeight: FontWeight.w600,
+    // Card titles, screen names
+    displaySmall: GoogleFonts.pressStart2p(
+      fontSize: 14,
       color: textPrimary,
+      height: 1.5,
     ),
     // Subsection labels
-    headlineMedium: GoogleFonts.spaceGrotesk(
-      fontSize: 20,
-      fontWeight: FontWeight.w500,
+    headlineMedium: GoogleFonts.pressStart2p(
+      fontSize: 11,
       color: textPrimary,
+      height: 1.6,
     ),
-    // Body text
+    // Body text — Inter for readability
     bodyLarge: GoogleFonts.inter(
       fontSize: 16,
       fontWeight: FontWeight.w400,
@@ -105,7 +112,6 @@ class VibeLabTheme {
       color: textSecondary,
       height: 1.5,
     ),
-    // Captions, tags, labels
     labelLarge: GoogleFonts.inter(
       fontSize: 13,
       fontWeight: FontWeight.w500,
@@ -121,6 +127,52 @@ class VibeLabTheme {
   );
 
   // ----------------------------------------------------------
+  // BRUTALIST BUTTON STYLE
+  // Hard border, sharp corners, flat — no soft shadows
+  // ----------------------------------------------------------
+  static ButtonStyle brutalistButton({
+    Color bg = vibeLime,
+    Color fg = textDark,
+    Color border = vibeLime,
+  }) {
+    return ElevatedButton.styleFrom(
+      backgroundColor: bg,
+      foregroundColor: fg,
+      elevation: 0,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4), // Almost sharp
+        side: BorderSide(color: border, width: 2),
+      ),
+      textStyle: GoogleFonts.pressStart2p(
+        fontSize: 11,
+        color: fg,
+      ),
+    );
+  }
+
+  // ----------------------------------------------------------
+  // BRUTALIST OUTLINED BUTTON
+  // ----------------------------------------------------------
+  static ButtonStyle brutalistOutlined({
+    Color fg = textPrimary,
+    Color border = borderNormal,
+  }) {
+    return OutlinedButton.styleFrom(
+      foregroundColor: fg,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4),
+        side: BorderSide(color: border, width: 2),
+      ),
+      textStyle: GoogleFonts.pressStart2p(
+        fontSize: 11,
+        color: fg,
+      ),
+    );
+  }
+
+  // ----------------------------------------------------------
   // MAIN THEME
   // ----------------------------------------------------------
   static ThemeData darkTheme() {
@@ -133,32 +185,32 @@ class VibeLabTheme {
         background: cosmicInk,
         surface: cosmicInkLight,
         primary: auroraPurple,
-        secondary: auroraTeal,
-        tertiary: auroraGold,
+        secondary: vibeLime,
+        tertiary: auroraTeal,
         onBackground: textPrimary,
         onSurface: textPrimary,
         onPrimary: Colors.white,
+        onSecondary: textDark,
       ),
 
-      // Input field styling
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: cosmicInkLighter,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: borderSubtle, width: 1),
+          borderRadius: BorderRadius.circular(4), // Sharp — brutalist
+          borderSide: const BorderSide(color: borderNormal, width: 2),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: borderSubtle, width: 1),
+          borderRadius: BorderRadius.circular(4),
+          borderSide: const BorderSide(color: borderNormal, width: 2),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: auroraPurple, width: 1.5),
+          borderRadius: BorderRadius.circular(4),
+          borderSide: const BorderSide(color: vibeLime, width: 2),
         ),
         hintStyle: GoogleFonts.inter(
           color: textHint,
-          fontSize: 15,
+          fontSize: 14,
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 20,
@@ -166,54 +218,35 @@ class VibeLabTheme {
         ),
       ),
 
-      // Card styling
       cardTheme: CardTheme(
         color: cosmicInkLighter,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(4),
           side: const BorderSide(color: borderSubtle, width: 1),
         ),
       ),
 
-      // AppBar styling
       appBarTheme: AppBarTheme(
         backgroundColor: cosmicInk,
         elevation: 0,
-        centerTitle: true,
-        titleTextStyle: GoogleFonts.spaceGrotesk(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
+        centerTitle: false,
+        titleTextStyle: GoogleFonts.pressStart2p(
+          fontSize: 14,
           color: textPrimary,
         ),
         iconTheme: const IconThemeData(color: textPrimary),
       ),
 
-      // Elevated button
       elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: auroraPurple,
-          foregroundColor: Colors.white,
-          elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
-          textStyle: GoogleFonts.spaceGrotesk(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
-          ),
-        ),
+        style: brutalistButton(),
       ),
 
-      // Icon theme
       iconTheme: const IconThemeData(
         color: textSecondary,
-        size: 22,
+        size: 20,
       ),
 
-      // Divider
       dividerTheme: const DividerThemeData(
         color: borderSubtle,
         thickness: 1,
@@ -222,8 +255,7 @@ class VibeLabTheme {
   }
 
   // ----------------------------------------------------------
-  // HELPER: Get aurora colors for a mood tag
-  // Used by AuroraBackground widget to shift colors
+  // HELPER: Get aurora colors for mood
   // ----------------------------------------------------------
   static List<Color> getAuroraForMood(String? moodTag) {
     if (moodTag == null) return defaultAurora;
