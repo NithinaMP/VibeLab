@@ -1,4 +1,3 @@
-=======================
 firebase_options.dart
 lib/core/secrets.dart
 .env
@@ -8,9 +7,7 @@ google-services.json
 GoogleService-Info.plist
 
 
-# ============================================================
 # FLUTTER
-# ============================================================
 
 # Build outputs — generated, never commit these
 /build/
@@ -72,9 +69,7 @@ GoogleService-Info.plist
 **/windows/flutter/generated_plugins.cmake
 
 
-# ============================================================
 # FIREBASE
-# ============================================================
 
 # Firebase CLI cache
 .firebase/
@@ -88,9 +83,7 @@ firebase-debug.*.log
 # But hosting deploy targets with secrets should not be pushed
 
 
-# ============================================================
 # IDEs & EDITORS
-# ============================================================
 
 # VS Code
 .vscode/
@@ -145,9 +138,7 @@ captures/
 \#*\#
 
 
-# ============================================================
 # OS FILES
-# ============================================================
 
 # macOS
 .DS_Store
@@ -171,9 +162,7 @@ $RECYCLE.BIN/
 *~
 
 
-# ============================================================
 # LOGS & TEMP FILES
-# ============================================================
 *.log
 *.tmp
 *.temp
@@ -183,9 +172,7 @@ yarn-debug.log*
 yarn-error.log*
 
 
-# ============================================================
 # VIBELAB SPECIFIC
-# ============================================================
 
 # Local audio stems — these are in Firebase Storage
 # Don't push large audio files to git
