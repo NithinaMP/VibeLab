@@ -88,6 +88,8 @@ Rules:
       );
 
       if (response.statusCode != 200) {
+        print('STATUS: ${response.statusCode}');
+        print('BODY: ${response.body}');
         throw Exception(
           'Gemini API error ${response.statusCode}: ${response.body}',
         );

@@ -14,7 +14,7 @@ class VibeLabConstants {
   // Key lives in secrets.dart — never hardcode here
   // ----------------------------------------------------------
   static const String geminiApiKey = Secrets.geminiApiKey;
-  static const String geminiModel = 'gemini-2.5-flash-lite-preview-06-17';
+  static const String geminiModel = 'gemini-2.5-flash';
   static const String geminiBaseUrl =
       'https://generativelanguage.googleapis.com/v1beta/models';
 
@@ -40,7 +40,7 @@ class VibeLabConstants {
   // Replace YOUR_GITHUB_USERNAME with your actual username.
   // ----------------------------------------------------------
   static const String _audioBase =
-      'https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/vibelab-assets/main/audio';
+      'https://raw.githubusercontent.com/NithinaMP/vibelab-assets/main/audio';
 
   static const Map<String, String> audioStems = {
     'chill': '$_audioBase/lofi_chill.mp3',

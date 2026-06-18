@@ -1,1 +1,44 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"wasteless-96f3a","appId":"1:976122112028:android:705fd7319da31ee3bb97d9","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"wasteless-96f3a","configurations":{"android":"1:976122112028:android:705fd7319da31ee3bb97d9","ios":"1:976122112028:ios:60f7c4abe2348da3bb97d9","web":"1:976122112028:web:4d75985e08340617bb97d9"}}}}}}
+{"flutter":{"platforms":{"android":{"default":{"projectId":"wasteless-96f3a","appId":"1:976122112028:android:705fd7319da31ee3bb97d9","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"wasteless-96f3a","configurations":{"android":"1:976122112028:android:705fd7319da31ee3bb97d9","ios":"1:976122112028:ios:60f7c4abe2348da3bb97d9","web":"1:976122112028:web:4d75985e08340617bb97d9"
+}}}}},
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=31536000"
+          }
+        ]
+      },
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "X-Frame-Options",
+            "value": "SAMEORIGIN"
+          },
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          }
+        ]
+      }
+    ]
+  }
+}
