@@ -14,7 +14,8 @@ class VibeLabConstants {
   // Key lives in secrets.dart — never hardcode here
   // ----------------------------------------------------------
   static const String geminiApiKey = Secrets.geminiApiKey;
-  static const String geminiModel = 'gemini-2.5-flash';
+  // static const String geminiModel = 'gemini-2.5-flash';
+  static const String geminiModel = 'gemini-2.5-flash-lite-preview-06-17';
   static const String geminiBaseUrl =
       'https://generativelanguage.googleapis.com/v1beta/models';
 

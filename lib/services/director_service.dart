@@ -51,69 +51,138 @@ Rules:
   // Returns a VibeBundle with all Gemini fields populated
   // Throws exceptions that VibeProvider catches and displays
   // ----------------------------------------------------------
+  // Future<VibeBundle> generateVibeBlueprint(String userPrompt) async {
+  //   final url = Uri.parse(
+  //     '${VibeLabConstants.geminiBaseUrl}/${VibeLabConstants.geminiModel}:generateContent'
+  //   '?key=${VibeLabConstants.geminiApiKey}',
+  //   );
+  //
+  //   final requestBody = {
+  //     'system_instruction': {
+  //       'parts': [
+  //         {'text': _systemPrompt}
+  //       ]
+  //     },
+  //     'contents': [
+  //       {
+  //         'parts': [
+  //           {
+  //             'text': 'Create a complete creative blueprint for this vibe: "$userPrompt"'
+  //           }
+  //         ]
+  //       }
+  //     ],
+  //     'generationConfig': {
+  //       'temperature': 0.9,      // High creativity
+  //       'topK': 40,
+  //       'topP': 0.95,
+  //       'maxOutputTokens': 1024, // JSON response is always small
+  //     },
+  //   };
+  //
+  //   try {
+  //     final response = await http.post(
+  //       url,
+  //       headers: {'Content-Type': 'application/json'},
+  //       body: jsonEncode(requestBody),
+  //     );
+  //
+  //     if (response.statusCode != 200) {
+  //       print('STATUS: ${response.statusCode}');
+  //       print('BODY: ${response.body}');
+  //       throw Exception(
+  //         'Gemini API error ${response.statusCode}: ${response.body}',
+  //       );
+  //     }
+  //
+  //     final responseData = jsonDecode(response.body);
+  //
+  //     // Extract the text content from Gemini's response structure
+  //     final String rawText = responseData['candidates'][0]['content']['parts'][0]['text'];
+  //
+  //     // Clean the response — Gemini sometimes wraps JSON in markdown
+  //     // even when told not to. This handles that case safely.
+  //     final String cleanedJson = _extractJson(rawText);
+  //
+  //     // Parse into a Map
+  //     final Map<String, dynamic> blueprintJson = jsonDecode(cleanedJson);
+  //
+  //     // Convert to VibeBundle and return
+  //     return VibeBundle.fromGeminiJson(blueprintJson, userPrompt);
+  //   } catch (e) {
+  //     throw Exception('Creative Director failed: $e');
+  //   }
+  // }
+
+
+
   Future<VibeBundle> generateVibeBlueprint(String userPrompt) async {
-    final url = Uri.parse(
-      '${VibeLabConstants.geminiBaseUrl}/${VibeLabConstants.geminiModel}:generateContent'
-    '?key=${VibeLabConstants.geminiApiKey}',
-    );
-
-    final requestBody = {
-      'system_instruction': {
-        'parts': [
-          {'text': _systemPrompt}
-        ]
-      },
-      'contents': [
-        {
-          'parts': [
-            {
-              'text': 'Create a complete creative blueprint for this vibe: "$userPrompt"'
-            }
-          ]
-        }
-      ],
-      'generationConfig': {
-        'temperature': 0.9,      // High creativity
-        'topK': 40,
-        'topP': 0.95,
-        'maxOutputTokens': 1024, // JSON response is always small
-      },
-    };
-
-    try {
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(requestBody),
-      );
-
-      if (response.statusCode != 200) {
-        print('STATUS: ${response.statusCode}');
-        print('BODY: ${response.body}');
-        throw Exception(
-          'Gemini API error ${response.statusCode}: ${response.body}',
+    // Retry up to 3 times with delay — handles 503 overload spikes
+    for (int attempt = 1; attempt <= 3; attempt++) {
+      try {
+        final url = Uri.parse(
+          '${VibeLabConstants.geminiBaseUrl}/${VibeLabConstants.geminiModel}:generateContent'
+              '?key=${VibeLabConstants.geminiApiKey}',
         );
+
+        final requestBody = {
+          'system_instruction': {
+            'parts': [
+              {'text': _systemPrompt}
+            ]
+          },
+          'contents': [
+            {
+              'parts': [
+                {
+                  'text': 'Create a complete creative blueprint for this vibe: "$userPrompt"'
+                }
+              ]
+            }
+          ],
+          'generationConfig': {
+            'temperature': 0.9,
+            'topK': 40,
+            'topP': 0.95,
+            'maxOutputTokens': 1024,
+          },
+        };
+
+        final response = await http.post(
+          url,
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode(requestBody),
+        );
+
+        if (response.statusCode == 503) {
+          if (attempt < 3) {
+            // Wait longer each retry — 2s, then 4s
+            await Future.delayed(Duration(seconds: attempt * 2));
+            continue; // try again
+          }
+          throw Exception('503: Gemini is overloaded. Please try again in a moment.');
+        }
+
+        if (response.statusCode != 200) {
+          throw Exception('STATUS: ${response.statusCode}\nBODY: ${response.body}');
+        }
+
+        final responseData = jsonDecode(response.body);
+        final String rawText =
+        responseData['candidates'][0]['content']['parts'][0]['text'];
+        final String cleanedJson = _extractJson(rawText);
+        final Map<String, dynamic> blueprintJson = jsonDecode(cleanedJson);
+        return VibeBundle.fromGeminiJson(blueprintJson, userPrompt);
+
+      } catch (e) {
+        if (attempt == 3) {
+          throw Exception('Creative Director failed after 3 attempts: $e');
+        }
+        await Future.delayed(Duration(seconds: attempt * 2));
       }
-
-      final responseData = jsonDecode(response.body);
-
-      // Extract the text content from Gemini's response structure
-      final String rawText = responseData['candidates'][0]['content']['parts'][0]['text'];
-
-      // Clean the response — Gemini sometimes wraps JSON in markdown
-      // even when told not to. This handles that case safely.
-      final String cleanedJson = _extractJson(rawText);
-
-      // Parse into a Map
-      final Map<String, dynamic> blueprintJson = jsonDecode(cleanedJson);
-
-      // Convert to VibeBundle and return
-      return VibeBundle.fromGeminiJson(blueprintJson, userPrompt);
-    } catch (e) {
-      throw Exception('Creative Director failed: $e');
     }
+    throw Exception('Creative Director failed: max retries exceeded');
   }
-
   // ----------------------------------------------------------
   // _extractJson
   // Safety method: strips markdown code blocks if Gemini

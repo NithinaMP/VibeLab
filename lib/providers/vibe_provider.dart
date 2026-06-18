@@ -198,12 +198,31 @@ class VibeProvider extends ChangeNotifier {
   }
 
   // Converts technical errors into friendly user messages
+  // String _friendlyError(String technical) {
+  //   if (technical.contains('401') || technical.contains('API key')) {
+  //     return 'API key issue. Check your Gemini key in constants.dart';
+  //   }
+  //   if (technical.contains('429') || technical.contains('quota')) {
+  //     return 'Daily limit reached. Gemini Flash-Lite allows 1000 free requests/day.';
+  //   }
+  //   if (technical.contains('Audio stem not found')) {
+  //     return 'Audio stems not uploaded yet. Check Firebase Storage setup.';
+  //   }
+  //   if (technical.contains('network') || technical.contains('SocketException')) {
+  //     return 'No internet connection. Check your network and try again.';
+  //   }
+  //   return 'Something went wrong. Please try again.';
+  // }
+
   String _friendlyError(String technical) {
+    if (technical.contains('503') || technical.contains('overloaded')) {
+      return 'Gemini is busy right now 🌊 Please try again in a few seconds.';
+    }
     if (technical.contains('401') || technical.contains('API key')) {
-      return 'API key issue. Check your Gemini key in constants.dart';
+      return 'API key issue. Check your Gemini key in secrets.dart';
     }
     if (technical.contains('429') || technical.contains('quota')) {
-      return 'Daily limit reached. Gemini Flash-Lite allows 1000 free requests/day.';
+      return 'Daily limit reached. Gemini 2.5 Flash allows 250 free requests/day.';
     }
     if (technical.contains('Audio stem not found')) {
       return 'Audio stems not uploaded yet. Check Firebase Storage setup.';

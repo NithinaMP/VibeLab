@@ -36,6 +36,41 @@ class _StudioScreenState extends State<StudioScreen> {
   // Uses Flutter's RenderRepaintBoundary to capture the widget
   // and triggers a browser download — zero cost, fully local
   // ----------------------------------------------------------
+  // Future<void> _exportAsPng() async {
+  //   setState(() => _isExporting = true);
+  //
+  //   try {
+  //     final boundary = _repaintKey.currentContext?.findRenderObject()
+  //     as RenderRepaintBoundary?;
+  //
+  //     if (boundary == null) return;
+  //
+  //     // Capture at 2x pixel ratio for high resolution export
+  //     final ui.Image image = await boundary.toImage(pixelRatio: 2.0);
+  //     final ByteData? byteData =
+  //     await image.toByteData(format: ui.ImageByteFormat.png);
+  //
+  //     if (byteData == null) return;
+  //
+  //     // Trigger browser download
+  //     final blob = html.Blob([byteData.buffer.asUint8List()]);
+  //     final url = html.Url.createObjectUrlFromBlob(blob);
+  //     html.AnchorElement(href: url)
+  //       ..setAttribute('download', 'vibelab_poster.png')
+  //       ..click();
+  //     html.Url.revokeObjectUrl(url);
+  //   } catch (e) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(content: Text('Export failed: $e')),
+  //       );
+  //     }
+  //   } finally {
+  //     setState(() => _isExporting = false);
+  //   }
+  // }
+
+
   Future<void> _exportAsPng() async {
     setState(() => _isExporting = true);
 
@@ -43,30 +78,58 @@ class _StudioScreenState extends State<StudioScreen> {
       final boundary = _repaintKey.currentContext?.findRenderObject()
       as RenderRepaintBoundary?;
 
-      if (boundary == null) return;
+      if (boundary == null) {
+        throw Exception('Could not find render boundary');
+      }
 
-      // Capture at 2x pixel ratio for high resolution export
+      // Capture at 2x for high resolution
       final ui.Image image = await boundary.toImage(pixelRatio: 2.0);
       final ByteData? byteData =
       await image.toByteData(format: ui.ImageByteFormat.png);
 
-      if (byteData == null) return;
+      if (byteData == null) throw Exception('Could not convert to PNG');
 
-      // Trigger browser download
-      final blob = html.Blob([byteData.buffer.asUint8List()]);
+      final bytes = byteData.buffer.asUint8List();
+
+      // Web-safe download using dart:html directly
+      final blob = html.Blob([bytes], 'image/png');
       final url = html.Url.createObjectUrlFromBlob(blob);
-      html.AnchorElement(href: url)
-        ..setAttribute('download', 'vibelab_poster.png')
-        ..click();
+      final anchor = html.document.createElement('a') as html.AnchorElement
+        ..href = url
+        ..style.display = 'none'
+        ..download = 'vibelab_${DateTime.now().millisecondsSinceEpoch}.png';
+
+      html.document.body!.children.add(anchor);
+      anchor.click();
+      html.document.body!.children.remove(anchor);
       html.Url.revokeObjectUrl(url);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Poster downloaded! 🧪',
+              style: GoogleFonts.inter(color: Colors.white),
+            ),
+            backgroundColor: VibeLabTheme.auroraPurple,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Export failed: $e')),
+          SnackBar(
+            content: Text('Export failed: $e'),
+            backgroundColor: Colors.red.shade800,
+          ),
         );
       }
     } finally {
-      setState(() => _isExporting = false);
+      if (mounted) setState(() => _isExporting = false);
     }
   }
 
