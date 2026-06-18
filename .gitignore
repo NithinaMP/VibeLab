@@ -1,4 +1,4 @@
-
+=======================
 firebase_options.dart
 lib/core/secrets.dart
 .env
@@ -111,6 +111,30 @@ firebase-debug.*.log
 .idea/caches
 .idea/modules.xml
 .idea/runConfigurations
+.idea/vcs.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/misc.xml
+.idea/.name
+.idea/encodings.xml
+.idea/kotlinc.xml
+.idea/androidTestResultsUserPreferences.xml
+
+# Android Studio local history
+.idea/shelf/
+.idea/httpRequests/
+.idea/dataSources/
+
+# Gradle
+.gradle/
+gradle-wrapper.jar
+local.properties
+
+# Android Studio profiling
+captures/
+
+# Kotlin
+*.kotlin_module
 
 # Vim
 *.swp

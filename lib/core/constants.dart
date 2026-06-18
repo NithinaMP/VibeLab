@@ -4,6 +4,8 @@
 // When a key changes, you change it HERE only.
 // ============================================================
 
+import 'package:vibelab/core/secrets.dart';
+
 class VibeLabConstants {
 VibeLabConstants._(); // prevent instantiation
 
@@ -12,8 +14,9 @@ VibeLabConstants._(); // prevent instantiation
 // Get your free key at: https://aistudio.google.com
 // We use Flash-Lite: 1000 free requests/day
 // ----------------------------------------------------------
-static const String geminiApiKey = 'YOUR_GEMINI_API_KEY_HERE';
-static const String geminiModel = 'gemini-2.5-flash-lite-preview-06-17';
+  static const String geminiApiKey = Secrets.geminiApiKey;
+
+  static const String geminiModel = 'gemini-2.5-flash-lite-preview-06-17';
 static const String geminiBaseUrl =
     'https://generativelanguage.googleapis.com/v1beta/models';
 
@@ -51,14 +54,34 @@ static const String savedPostersPath = 'saved_posters';
 // or https://www.looperman.com
 // ----------------------------------------------------------
 static const Map<String, String> audioStems = {
-  'chill': 'lofi_chill.mp3',
-  'hype': 'hype_energy.mp3',
-  'dark': 'dark_ambient.mp3',
-  'retro': 'synthwave_retro.mp3',
-  'nature': 'nature_calm.mp3',
-  'cyberpunk': 'cyberpunk_glitch.mp3',
-  'romantic': 'romantic_soft.mp3',
-  'corporate': 'corporate_upbeat.mp3',
+  'chill':
+  'https://raw.githubusercontent.com/NithinaMP/vibelab-assets/main/audio/lofi_chill.mp3',
+
+  'hype':
+  'https://raw.githubusercontent.com/NithinaMP/vibelab-assets/main/audio/hype_energy.mp3',
+
+  'dark':
+  'https://raw.githubusercontent.com/NithinaMP/vibelab-assets/main/audio/dark_ambient.mp3',
+
+
+  // 'chill': 'lofi_chill.mp3',
+  // 'hype': 'hype_energy.mp3',
+  // 'dark': 'dark_ambient.mp3',
+  'retro': 'https://raw.githubusercontent.com/NithinaMP/vibelab-assets/main/audio/synthwave_retro.mp3',
+
+  // 'synthwave_retro.mp3',
+  'nature':  'https://raw.githubusercontent.com/NithinaMP/vibelab-assets/main/audio/nature_calm.mp3',
+
+  // 'nature_calm.mp3',
+  'cyberpunk':  'https://raw.githubusercontent.com/NithinaMP/vibelab-assets/main/audio/cyberpunk_glitch.mp3',
+
+  // 'cyberpunk_glitch.mp3',
+  'romantic':   'https://raw.githubusercontent.com/NithinaMP/vibelab-assets/main/audio/romantic_soft.mp3',
+
+  // 'romantic_soft.mp3',
+  'corporate':   'https://raw.githubusercontent.com/NithinaMP/vibelab-assets/main/audio/corporate_upbeat.mp3',
+
+  // 'corporate_upbeat.mp3',
 };
 
 // ----------------------------------------------------------

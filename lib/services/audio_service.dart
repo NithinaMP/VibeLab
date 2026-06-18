@@ -30,33 +30,38 @@ class AudioService {
   // /audio_stems/hype_energy.mp3
   // etc. (see constants.dart for full list)
   // ----------------------------------------------------------
+  // Future<String> getAudioUrlForMood(String moodTag) async {
+  //   // Return cached URL if we already fetched this mood
+  //   if (_urlCache.containsKey(moodTag)) {
+  //     return _urlCache[moodTag]!;
+  //   }
+  //
+  //   // Get the filename for this mood
+  //   final fileName = VibeLabConstants.audioStems[moodTag.toLowerCase()]
+  //       ?? VibeLabConstants.audioStems['chill']!; // fallback to chill
+  //
+  //   try {
+  //     // Get the download URL from Firebase Storage
+  //     final ref = _storage.ref().child(
+  //       '${VibeLabConstants.audioStemsPath}/$fileName',
+  //     );
+  //
+  //     final url = await ref.getDownloadURL();
+  //
+  //     // Cache it for future requests
+  //     _urlCache[moodTag] = url;
+  //
+  //     return url;
+  //   } catch (e) {
+  //     throw Exception('Audio stem not found for mood "$moodTag": $e\n'
+  //         'Make sure you uploaded the audio stems to Firebase Storage.\n'
+  //         'See constants.dart for the required file names.');
+  //   }
+  // }
   Future<String> getAudioUrlForMood(String moodTag) async {
-    // Return cached URL if we already fetched this mood
-    if (_urlCache.containsKey(moodTag)) {
-      return _urlCache[moodTag]!;
-    }
-
-    // Get the filename for this mood
-    final fileName = VibeLabConstants.audioStems[moodTag.toLowerCase()]
-        ?? VibeLabConstants.audioStems['chill']!; // fallback to chill
-
-    try {
-      // Get the download URL from Firebase Storage
-      final ref = _storage.ref().child(
-        '${VibeLabConstants.audioStemsPath}/$fileName',
-      );
-
-      final url = await ref.getDownloadURL();
-
-      // Cache it for future requests
-      _urlCache[moodTag] = url;
-
-      return url;
-    } catch (e) {
-      throw Exception('Audio stem not found for mood "$moodTag": $e\n'
-          'Make sure you uploaded the audio stems to Firebase Storage.\n'
-          'See constants.dart for the required file names.');
-    }
+    // No Firebase call needed — URL is directly in constants
+    return VibeLabConstants.audioStems[moodTag.toLowerCase()]
+        ?? VibeLabConstants.audioStems['chill']!;
   }
 
   // ----------------------------------------------------------
