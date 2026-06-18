@@ -1,8 +1,7 @@
 // ============================================================
-// VibeLab — vibe_input.dart
-// The central input bar on the home screen.
-// Clean, confident, minimal — just like premium apps.
-// Includes preset tags below for quick selection.
+// VibeLab — vibe_input.dart (UI Refresh)
+// Brutalist input field — sharp corners, thick border.
+// Lime Generate button. Text-only preset tags.
 // ============================================================
 
 import 'package:flutter/material.dart';
@@ -52,85 +51,82 @@ class _VibeInputState extends State<VibeInput> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isWide = screenWidth > 700;
+    final isWide = MediaQuery.of(context).size.width > 700;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // --------------------------------------------------
-        // Main input field
+        // Brutalist input field
         // --------------------------------------------------
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
+        ConstrainedBox(
           constraints: BoxConstraints(
             maxWidth: isWide ? 680 : double.infinity,
           ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: _isFocused
-                  ? VibeLabTheme.auroraPurple
-                  : VibeLabTheme.borderSubtle,
-              width: _isFocused ? 1.5 : 1.0,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4),
+              border: Border.all(
+                color: _isFocused
+                    ? VibeLabTheme.vibeLime
+                    : VibeLabTheme.borderNormal,
+                width: 2,
+              ),
+              color: VibeLabTheme.cosmicInkLighter,
+              // Lime glow when focused
+              boxShadow: _isFocused
+                  ? [
+                BoxShadow(
+                  color: VibeLabTheme.vibeLime.withOpacity(0.08),
+                  blurRadius: 16,
+                  spreadRadius: 0,
+                )
+              ]
+                  : [],
             ),
-            color: VibeLabTheme.cosmicInkLighter,
-            boxShadow: _isFocused
-                ? [
-              BoxShadow(
-                color: VibeLabTheme.auroraPurple.withOpacity(0.15),
-                blurRadius: 20,
-                spreadRadius: 0,
-              )
-            ]
-                : [],
-          ),
-          child: Row(
-            children: [
-              const SizedBox(width: 18),
-              Expanded(
-                child: TextField(
-                  controller: _controller,
-                  focusNode: _focusNode,
-                  style: GoogleFonts.inter(
-                    color: VibeLabTheme.textPrimary,
-                    fontSize: 15,
-                  ),
-                  decoration: InputDecoration(
-                    hintText:
-                    'Describe a mood, vibe, or theme...',
-                    hintStyle: GoogleFonts.inter(
-                      color: VibeLabTheme.textHint,
-                      fontSize: 15,
+            child: Row(
+              children: [
+                const SizedBox(width: 16),
+                Expanded(
+                  child: TextField(
+                    controller: _controller,
+                    focusNode: _focusNode,
+                    style: GoogleFonts.inter(
+                      color: VibeLabTheme.textPrimary,
+                      fontSize: 14,
                     ),
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(
-                      vertical: 18,
+                    decoration: InputDecoration(
+                      hintText: 'describe your vibe...',
+                      hintStyle: GoogleFonts.inter(
+                        color: VibeLabTheme.textHint,
+                        fontSize: 14,
+                      ),
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      contentPadding:
+                      const EdgeInsets.symmetric(vertical: 18),
                     ),
+                    onSubmitted: (_) => _generate(context),
                   ),
-                  onSubmitted: (_) => _generate(context),
-                  maxLines: 1,
                 ),
-              ),
-              const SizedBox(width: 8),
+                const SizedBox(width: 8),
 
-              // Generate button inside the input field
-              Padding(
-                padding: const EdgeInsets.all(6),
-                child: _GenerateButton(
-                  onTap: () => _generate(context),
+                // Lime brutalist generate button
+                Padding(
+                  padding: const EdgeInsets.all(6),
+                  child: _GenerateButton(onTap: () => _generate(context)),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
 
-        const SizedBox(height: 20),
+        const SizedBox(height: 16),
 
         // --------------------------------------------------
-        // Preset vibe tags
+        // Preset tags — text only, no emojis
         // --------------------------------------------------
         ConstrainedBox(
           constraints: BoxConstraints(
@@ -141,8 +137,14 @@ class _VibeInputState extends State<VibeInput> {
             runSpacing: 8,
             alignment: WrapAlignment.center,
             children: VibeLabConstants.vibePresets.map((preset) {
-              return _VibeTag(
-                label: preset['label']!,
+              // Strip emoji from label — show text only
+              final rawLabel = preset['label']!;
+              final textOnly = rawLabel
+                  .replaceAll(RegExp(r'[^\x00-\x7F]'), '')
+                  .trim();
+
+              return _PresetTag(
+                label: textOnly.isEmpty ? rawLabel : textOnly,
                 onTap: () => _usePreset(preset['prompt']!),
               );
             }).toList(),
@@ -154,7 +156,7 @@ class _VibeInputState extends State<VibeInput> {
 }
 
 // ----------------------------------------------------------
-// The glowing generate button
+// Lime brutalist generate button
 // ----------------------------------------------------------
 class _GenerateButton extends StatefulWidget {
   final VoidCallback onTap;
@@ -168,15 +170,16 @@ class _GenerateButtonState extends State<_GenerateButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scale;
+  bool _hovered = false;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 100),
+      duration: const Duration(milliseconds: 80),
       vsync: this,
     );
-    _scale = Tween<double>(begin: 1.0, end: 0.92).animate(
+    _scale = Tween<double>(begin: 1.0, end: 0.94).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
   }
@@ -189,46 +192,44 @@ class _GenerateButtonState extends State<_GenerateButton>
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) => _controller.forward(),
-      onTapUp: (_) {
-        _controller.reverse();
-        widget.onTap();
-      },
-      onTapCancel: () => _controller.reverse(),
-      child: ScaleTransition(
-        scale: _scale,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            gradient: const LinearGradient(
-              colors: [VibeLabTheme.auroraPurple, VibeLabTheme.auroraTeal],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTapDown: (_) => _controller.forward(),
+        onTapUp: (_) {
+          _controller.reverse();
+          widget.onTap();
+        },
+        onTapCancel: () => _controller.reverse(),
+        child: ScaleTransition(
+          scale: _scale,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 18,
+              vertical: 12,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: VibeLabTheme.auroraPurple.withOpacity(0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4),
+              color: _hovered
+                  ? VibeLabTheme.vibeLimeDark
+                  : VibeLabTheme.vibeLime,
+              border: Border.all(
+                color: _hovered
+                    ? VibeLabTheme.vibeLimeDark
+                    : VibeLabTheme.vibeLime,
+                width: 2,
               ),
-            ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('🧪', style: TextStyle(fontSize: 14)),
-              const SizedBox(width: 6),
-              Text(
-                'Generate',
-                style: GoogleFonts.spaceGrotesk(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
+            ),
+            child: Text(
+              'GENERATE',
+              style: GoogleFonts.pressStart2p(
+                fontSize: 9,
+                color: VibeLabTheme.textDark,
+                letterSpacing: 0.5,
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -237,19 +238,18 @@ class _GenerateButtonState extends State<_GenerateButton>
 }
 
 // ----------------------------------------------------------
-// Preset vibe tag pill
+// Preset tag — brutalist pill, text only
 // ----------------------------------------------------------
-class _VibeTag extends StatefulWidget {
+class _PresetTag extends StatefulWidget {
   final String label;
   final VoidCallback onTap;
-
-  const _VibeTag({required this.label, required this.onTap});
+  const _PresetTag({required this.label, required this.onTap});
 
   @override
-  State<_VibeTag> createState() => _VibeTagState();
+  State<_PresetTag> createState() => _PresetTagState();
 }
 
-class _VibeTagState extends State<_VibeTag> {
+class _PresetTagState extends State<_PresetTag> {
   bool _hovered = false;
 
   @override
@@ -260,29 +260,27 @@ class _VibeTagState extends State<_VibeTag> {
       child: GestureDetector(
         onTap: widget.onTap,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          padding:
-          const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          duration: const Duration(milliseconds: 120),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(4),
             border: Border.all(
               color: _hovered
-                  ? VibeLabTheme.auroraPurple
+                  ? VibeLabTheme.vibeLime
                   : VibeLabTheme.borderSubtle,
-              width: 1,
+              width: _hovered ? 2 : 1,
             ),
             color: _hovered
-                ? VibeLabTheme.auroraPurple.withOpacity(0.1)
+                ? VibeLabTheme.vibeLime.withOpacity(0.08)
                 : VibeLabTheme.cosmicInkLighter,
           ),
           child: Text(
-            widget.label,
-            style: GoogleFonts.inter(
-              fontSize: 12,
+            widget.label.toUpperCase(),
+            style: GoogleFonts.pressStart2p(
+              fontSize: 7,
               color: _hovered
-                  ? VibeLabTheme.textPrimary
+                  ? VibeLabTheme.vibeLime
                   : VibeLabTheme.textSecondary,
-              fontWeight: FontWeight.w500,
             ),
           ),
         ),
