@@ -1,8 +1,7 @@
 // ============================================================
-// VibeLab — home_screen.dart
-// The entry point. Vast, dark, alive.
-// The aurora breathes. One input. Total confidence.
-// Reacts to VibeState — shows loading overlay during generation.
+// VibeLab — home_screen.dart (UI Refresh)
+// Dark Aurora Brutalist aesthetic.
+// Pixel font headings, lime accents, sharp borders.
 // ============================================================
 
 import 'package:flutter/material.dart';
@@ -23,10 +22,8 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<VibeProvider>(
       builder: (context, provider, _) {
-        // Navigate to studio when generation succeeds
         if (provider.state == VibeState.success &&
             provider.currentVibe != null) {
-          // Use addPostFrameCallback to avoid build-phase navigation
           WidgetsBinding.instance.addPostFrameCallback((_) {
             Navigator.of(context).push(
               PageRouteBuilder(
@@ -40,7 +37,6 @@ class HomeScreen extends StatelessWidget {
           });
         }
 
-        // Show loading overlay during generation
         if (provider.state == VibeState.loading) {
           return LoadingOverlay(message: provider.loadingMessage);
         }
@@ -51,14 +47,7 @@ class HomeScreen extends StatelessWidget {
             body: SafeArea(
               child: Column(
                 children: [
-                  // ------------------------------------------
-                  // Top navigation bar
-                  // ------------------------------------------
                   _TopBar(),
-
-                  // ------------------------------------------
-                  // Main content — centered hero
-                  // ------------------------------------------
                   Expanded(
                     child: Center(
                       child: SingleChildScrollView(
@@ -68,34 +57,43 @@ class HomeScreen extends StatelessWidget {
                           children: [
                             const SizedBox(height: 40),
 
-                            // App icon
-                            const Text(
-                              '🧪',
-                              style: TextStyle(fontSize: 52),
+                            // ----------------------------------
+                            // Logo mark — geometric SVG flask
+                            // ----------------------------------
+                            _LogoMark(),
+
+                            const SizedBox(height: 24),
+
+                            // ----------------------------------
+                            // App name — pixel font, oversized
+                            // ----------------------------------
+                            Text(
+                              'VIBELAB',
+                              style: GoogleFonts.pressStart2p(
+                                fontSize: 36,
+                                color: VibeLabTheme.textPrimary,
+                                height: 1.2,
+                              ),
                             ),
 
                             const SizedBox(height: 16),
 
-                            // App name
-                            Text(
-                              'VibeLab',
-                              style: GoogleFonts.spaceGrotesk(
-                                fontSize: 52,
-                                fontWeight: FontWeight.w700,
-                                color: VibeLabTheme.textPrimary,
-                                letterSpacing: -2,
-                              ),
+                            // Lime underline accent
+                            Container(
+                              width: 60,
+                              height: 3,
+                              color: VibeLabTheme.vibeLime,
                             ),
 
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 20),
 
-                            // Tagline
+                            // Tagline — Inter for readability
                             Text(
-                              'Input a mood. Get a synchronized creative universe.',
+                              'Input a mood.\nGet a synchronized creative universe.',
                               style: GoogleFonts.inter(
-                                fontSize: 16,
+                                fontSize: 15,
                                 color: VibeLabTheme.textSecondary,
-                                height: 1.5,
+                                height: 1.6,
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -107,14 +105,14 @@ class HomeScreen extends StatelessWidget {
 
                             const SizedBox(height: 24),
 
-                            // Error message if something failed
+                            // Error message
                             if (provider.state == VibeState.error)
                               _ErrorBanner(message: provider.errorMessage),
 
                             const SizedBox(height: 40),
 
-                            // Feature pills
-                            _FeaturePills(),
+                            // Feature tags
+                            _FeatureTags(),
 
                             const SizedBox(height: 40),
                           ],
@@ -133,52 +131,50 @@ class HomeScreen extends StatelessWidget {
 }
 
 // ----------------------------------------------------------
-// Top navigation bar
+// Top navigation bar — brutalist style
 // ----------------------------------------------------------
 class _TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Logo
-          Row(
-            children: [
-              const Text('🧪', style: TextStyle(fontSize: 18)),
-              const SizedBox(width: 8),
-              Text(
-                'VibeLab',
-                style: GoogleFonts.spaceGrotesk(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: VibeLabTheme.textPrimary,
-                ),
-              ),
-            ],
+          // Logo text
+          Text(
+            'VIBELAB',
+            style: GoogleFonts.pressStart2p(
+              fontSize: 12,
+              color: VibeLabTheme.textPrimary,
+            ),
           ),
 
-          // Gallery button
-          TextButton.icon(
-            onPressed: () {
+          // Gallery nav button — brutalist outlined
+          GestureDetector(
+            onTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const GalleryScreen(),
-                ),
+                MaterialPageRoute(builder: (_) => const GalleryScreen()),
               );
             },
-            icon: const Icon(
-              Icons.grid_view_rounded,
-              size: 16,
-              color: VibeLabTheme.textSecondary,
-            ),
-            label: Text(
-              'Gallery',
-              style: GoogleFonts.inter(
-                fontSize: 13,
-                color: VibeLabTheme.textSecondary,
-                fontWeight: FontWeight.w500,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 8,
+              ),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: VibeLabTheme.borderNormal,
+                  width: 2,
+                ),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                'GALLERY',
+                style: GoogleFonts.pressStart2p(
+                  fontSize: 9,
+                  color: VibeLabTheme.textSecondary,
+                ),
               ),
             ),
           ),
@@ -186,6 +182,85 @@ class _TopBar extends StatelessWidget {
       ),
     );
   }
+}
+
+// ----------------------------------------------------------
+// Geometric SVG flask logo mark
+// ----------------------------------------------------------
+class _LogoMark extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 56,
+      height: 56,
+      child: CustomPaint(
+        painter: _FlaskPainter(),
+      ),
+    );
+  }
+}
+
+class _FlaskPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final strokePaint = Paint()
+      ..color = VibeLabTheme.vibeLime
+      ..strokeWidth = 2.5
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.square; // Brutalist — square caps
+
+    final fillPaint = Paint()
+      ..color = VibeLabTheme.vibeLime.withOpacity(0.15)
+      ..style = PaintingStyle.fill;
+
+    final w = size.width;
+    final h = size.height;
+
+    // Flask body path
+    final path = Path();
+    path.moveTo(w * 0.35, h * 0.05); // top left of neck
+    path.lineTo(w * 0.65, h * 0.05); // top right of neck
+    path.lineTo(w * 0.65, h * 0.38); // right neck bottom
+    path.lineTo(w * 0.90, h * 0.78); // right shoulder
+    path.lineTo(w * 0.90, h * 0.92); // right bottom
+    path.lineTo(w * 0.10, h * 0.92); // left bottom
+    path.lineTo(w * 0.10, h * 0.78); // left shoulder
+    path.lineTo(w * 0.35, h * 0.38); // left neck bottom
+    path.close();
+
+    // Fill
+    canvas.drawPath(path, fillPaint);
+    // Stroke
+    canvas.drawPath(path, strokePaint);
+
+    // Liquid inside flask — lime fill
+    final liquidPaint = Paint()
+      ..color = VibeLabTheme.vibeLime.withOpacity(0.4)
+      ..style = PaintingStyle.fill;
+
+    final liquidPath = Path();
+    liquidPath.moveTo(w * 0.15, h * 0.78);
+    liquidPath.lineTo(w * 0.85, h * 0.78);
+    liquidPath.lineTo(w * 0.90, h * 0.92);
+    liquidPath.lineTo(w * 0.10, h * 0.92);
+    liquidPath.close();
+    canvas.drawPath(liquidPath, liquidPaint);
+
+    // Bubbles — two small circles
+    canvas.drawCircle(
+      Offset(w * 0.38, h * 0.68),
+      3,
+      strokePaint..color = VibeLabTheme.vibeLime,
+    );
+    canvas.drawCircle(
+      Offset(w * 0.58, h * 0.60),
+      2,
+      strokePaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 // ----------------------------------------------------------
@@ -201,8 +276,8 @@ class _ErrorBanner extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.red.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.red.withOpacity(0.3)),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: Colors.red.withOpacity(0.5), width: 2),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -213,7 +288,7 @@ class _ErrorBanner extends StatelessWidget {
             child: Text(
               message,
               style: GoogleFonts.inter(
-                fontSize: 13,
+                fontSize: 12,
                 color: Colors.red.shade300,
               ),
             ),
@@ -225,16 +300,16 @@ class _ErrorBanner extends StatelessWidget {
 }
 
 // ----------------------------------------------------------
-// Feature pills showing what the app generates
+// Feature tags — no emojis, clean text pills
 // ----------------------------------------------------------
-class _FeaturePills extends StatelessWidget {
+class _FeatureTags extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final features = [
-      ('🖼️', 'AI Poster'),
-      ('😂', 'Meme Kit'),
-      ('🎵', 'Mood Audio'),
-      ('✨', 'Brand Memory'),
+      'AI POSTER',
+      'MEME KIT',
+      'MOOD AUDIO',
+      'BRAND MEMORY',
     ];
 
     return Wrap(
@@ -245,24 +320,16 @@ class _FeaturePills extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: VibeLabTheme.borderSubtle),
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(color: VibeLabTheme.borderSubtle, width: 1),
             color: VibeLabTheme.cosmicInkLighter,
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(f.$1, style: const TextStyle(fontSize: 13)),
-              const SizedBox(width: 6),
-              Text(
-                f.$2,
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  color: VibeLabTheme.textSecondary,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
+          child: Text(
+            f,
+            style: GoogleFonts.pressStart2p(
+              fontSize: 8,
+              color: VibeLabTheme.textSecondary,
+            ),
           ),
         );
       }).toList(),
