@@ -1,7 +1,5 @@
 // ============================================================
-// VibeLab — main.dart
-// Entry point. Initializes Firebase, sets up Provider,
-// and launches the app with the Aurora theme.
+// VibeLab — main.dart (Updated with AuthProvider)
 // ============================================================
 
 import 'package:flutter/material.dart';
@@ -9,7 +7,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'providers/vibe_provider.dart';
-import 'screens/home_screen.dart';
+import 'providers/auth_provider.dart';
+import 'screens/auth/splash_screen.dart';
 import 'core/theme.dart';
 
 void main() async {
@@ -29,13 +28,16 @@ class VibeLab extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => VibeProvider()),
       ],
       child: MaterialApp(
         title: 'VibeLab',
         debugShowCheckedModeBanner: false,
         theme: VibeLabTheme.darkTheme(),
-        home: const HomeScreen(),
+        // App always starts at SplashScreen
+        // SplashScreen routes to Login or Home based on auth state
+        home: const SplashScreen(),
       ),
     );
   }
