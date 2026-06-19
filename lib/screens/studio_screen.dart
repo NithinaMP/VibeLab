@@ -287,8 +287,10 @@ class _ControlsPanel extends StatelessWidget {
             onExport: onExport,
             onSave: () => provider.saveToGallery(),
             onNewVibe: () {
-              provider.resetToHome();
               Navigator.of(context).pop();
+              Future.delayed(const Duration(milliseconds: 300), () {
+                provider.resetToHome();
+              });
             },
           ),
         ],
@@ -595,8 +597,10 @@ class _StudioTopBar extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () {
-              context.read<VibeProvider>().resetToHome();
               Navigator.of(context).pop();
+              Future.delayed(const Duration(milliseconds: 300), () {
+                context.read<VibeProvider>().resetToHome();
+              });
             },
             child: Container(
               padding: const EdgeInsets.symmetric(
