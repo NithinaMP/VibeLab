@@ -7,6 +7,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:vibelab/providers/auth_provider.dart';
+import 'package:vibelab/screens/auth/profile_screen.dart';
 import '../core/theme.dart';
 import '../providers/vibe_provider.dart';
 import '../widgets/aurora_background.dart';
@@ -133,6 +135,65 @@ class HomeScreen extends StatelessWidget {
 // ----------------------------------------------------------
 // Top navigation bar — brutalist style
 // ----------------------------------------------------------
+// class _TopBar extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//         children: [
+//           // Logo text
+//           Text(
+//             'VIBELAB',
+//             style: GoogleFonts.pressStart2p(
+//               fontSize: 12,
+//               color: VibeLabTheme.textPrimary,
+//             ),
+//           ),
+//
+//           // Gallery nav button — brutalist outlined
+//           GestureDetector(
+//             onTap: () {
+//               Navigator.of(context).push(
+//                 MaterialPageRoute(builder: (_) => const GalleryScreen()),
+//               );
+//             },
+//             child: Container(
+//               padding: const EdgeInsets.symmetric(
+//                 horizontal: 14,
+//                 vertical: 8,
+//               ),
+//               decoration: BoxDecoration(
+//                 border: Border.all(
+//                   color: VibeLabTheme.borderNormal,
+//                   width: 2,
+//                 ),
+//                 borderRadius: BorderRadius.circular(4),
+//               ),
+//               child: Text(
+//                 'GALLERY',
+//                 style: GoogleFonts.pressStart2p(
+//                   fontSize: 9,
+//                   color: VibeLabTheme.textSecondary,
+//                 ),
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+// ============================================================
+// VibeLab — home_screen.dart (Updated — profile button added)
+// Replace the _TopBar class only. Rest stays the same.
+// ============================================================
+
+// ----------------------------------------------------------
+// REPLACE _TopBar with this version:
+// ----------------------------------------------------------
+
 class _TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -141,7 +202,7 @@ class _TopBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Logo text
+          // Logo
           Text(
             'VIBELAB',
             style: GoogleFonts.pressStart2p(
@@ -150,40 +211,105 @@ class _TopBar extends StatelessWidget {
             ),
           ),
 
-          // Gallery nav button — brutalist outlined
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const GalleryScreen()),
-              );
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 8,
-              ),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: VibeLabTheme.borderNormal,
-                  width: 2,
+          // Right side nav
+          Row(
+            children: [
+              // Gallery button
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const GalleryScreen(),
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: VibeLabTheme.borderSubtle,
+                      width: 2,
+                    ),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    'GALLERY',
+                    style: GoogleFonts.pressStart2p(
+                      fontSize: 9,
+                      color: VibeLabTheme.textSecondary,
+                    ),
+                  ),
                 ),
-                borderRadius: BorderRadius.circular(4),
               ),
-              child: Text(
-                'GALLERY',
-                style: GoogleFonts.pressStart2p(
-                  fontSize: 9,
-                  color: VibeLabTheme.textSecondary,
-                ),
+
+              const SizedBox(width: 10),
+
+              // Profile button
+              Consumer<AuthProvider>(
+                builder: (context, auth, _) {
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const ProfileScreen(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                          color: VibeLabTheme.vibeLime.withOpacity(0.5),
+                          width: 2,
+                        ),
+                        color: VibeLabTheme.cosmicInkLighter,
+                      ),
+                      child: auth.photoUrl.isNotEmpty
+                          ? ClipRRect(
+                        borderRadius: BorderRadius.circular(2),
+                        child: Image.network(
+                          auth.photoUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Center(
+                            child: Text(
+                              auth.displayName.isNotEmpty
+                                  ? auth.displayName[0].toUpperCase()
+                                  : 'V',
+                              style: GoogleFonts.pressStart2p(
+                                fontSize: 12,
+                                color: VibeLabTheme.vibeLime,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                          : Center(
+                        child: Text(
+                          auth.displayName.isNotEmpty
+                              ? auth.displayName[0].toUpperCase()
+                              : 'V',
+                          style: GoogleFonts.pressStart2p(
+                            fontSize: 12,
+                            color: VibeLabTheme.vibeLime,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
-            ),
+            ],
           ),
         ],
       ),
     );
   }
 }
-
 // ----------------------------------------------------------
 // Geometric SVG flask logo mark
 // ----------------------------------------------------------
