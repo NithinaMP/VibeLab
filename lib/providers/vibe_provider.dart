@@ -93,6 +93,8 @@ class VibeProvider extends ChangeNotifier {
       // Success — UI will navigate to studio screen
       _setState(VibeState.success);
     } catch (e) {
+      print('VIBELAB ERROR: $e');
+
       _errorMessage = _friendlyError(e.toString());
       _setState(VibeState.error);
     }

@@ -1,8 +1,5 @@
 // ============================================================
-// VibeLab — gallery_screen.dart
-// Pinterest-style masonry grid of all saved vibes.
-// Loads from Firestore. Each card shows the poster image
-// with the mood tag and headline.
+// VibeLab — gallery_screen.dart (Complete - UI Refresh Applied)
 // ============================================================
 
 import 'package:flutter/material.dart';
@@ -27,7 +24,6 @@ class _GalleryScreenState extends State<GalleryScreen> {
   @override
   void initState() {
     super.initState();
-    // Load gallery when screen opens
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<VibeProvider>().loadGallery();
     });
@@ -43,10 +39,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
             body: SafeArea(
               child: Column(
                 children: [
-                  // Top bar
-                  _GalleryTopBar(),
-
-                  // Content
+                  _GalleryTopBar(galleryCount: provider.gallery.length),
                   Expanded(
                     child: provider.isGalleryLoading
                         ? _LoadingGrid()
@@ -65,36 +58,66 @@ class _GalleryScreenState extends State<GalleryScreen> {
 }
 
 // ----------------------------------------------------------
-// Gallery top bar
+// Gallery top bar — brutalist
 // ----------------------------------------------------------
 class _GalleryTopBar extends StatelessWidget {
+  final int galleryCount;
+  const _GalleryTopBar({required this.galleryCount});
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: VibeLabTheme.borderSubtle, width: 1),
+        ),
+      ),
       child: Row(
         children: [
-          IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(
-              Icons.arrow_back_rounded,
-              color: VibeLabTheme.textSecondary,
+          // Back button
+          GestureDetector(
+            onTap: () => Navigator.of(context).pop(),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 8,
+              ),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: VibeLabTheme.borderNormal,
+                  width: 2,
+                ),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                '< BACK',
+                style: GoogleFonts.pressStart2p(
+                  fontSize: 8,
+                  color: VibeLabTheme.textSecondary,
+                ),
+              ),
             ),
           ),
-          const SizedBox(width: 8),
+
+          const SizedBox(width: 16),
+
+          // Page title
           Text(
-            'Your Gallery',
-            style: GoogleFonts.spaceGrotesk(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+            'GALLERY',
+            style: GoogleFonts.pressStart2p(
+              fontSize: 14,
               color: VibeLabTheme.textPrimary,
             ),
           ),
+
           const Spacer(),
+
+          // Vibe count
           Text(
-            'saved vibes',
-            style: GoogleFonts.inter(
-              fontSize: 12,
+            '$galleryCount VIBES',
+            style: GoogleFonts.pressStart2p(
+              fontSize: 8,
               color: VibeLabTheme.textHint,
             ),
           ),
@@ -105,7 +128,7 @@ class _GalleryTopBar extends StatelessWidget {
 }
 
 // ----------------------------------------------------------
-// Masonry grid of saved vibes
+// Masonry grid
 // ----------------------------------------------------------
 class _GalleryGrid extends StatelessWidget {
   final List<VibeBundle> vibes;
@@ -117,7 +140,7 @@ class _GalleryGrid extends StatelessWidget {
     MediaQuery.of(context).size.width > 900 ? 4 : 2;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(16),
       child: MasonryGridView.count(
         crossAxisCount: crossAxisCount,
         mainAxisSpacing: 12,
@@ -132,7 +155,7 @@ class _GalleryGrid extends StatelessWidget {
 }
 
 // ----------------------------------------------------------
-// Individual gallery card
+// Gallery card
 // ----------------------------------------------------------
 class _GalleryCard extends StatefulWidget {
   final VibeBundle vibe;
@@ -153,26 +176,18 @@ class _GalleryCardState extends State<_GalleryCard> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(4),
           border: Border.all(
             color: _hovered
-                ? VibeLabTheme.auroraPurple.withOpacity(0.5)
+                ? VibeLabTheme.vibeLime
                 : VibeLabTheme.borderSubtle,
+            width: _hovered ? 2 : 1,
           ),
-          boxShadow: _hovered
-              ? [
-            BoxShadow(
-              color: VibeLabTheme.auroraPurple.withOpacity(0.1),
-              blurRadius: 20,
-            )
-          ]
-              : [],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(4),
           child: Stack(
             children: [
-              // Image
               widget.vibe.imageUrl != null
                   ? CachedNetworkImage(
                 imageUrl: widget.vibe.imageUrl!,
@@ -189,8 +204,14 @@ class _GalleryCardState extends State<_GalleryCard> {
                 errorWidget: (context, url, error) => Container(
                   height: 180,
                   color: VibeLabTheme.cosmicInkLighter,
-                  child: const Center(
-                    child: Text('🎨', style: TextStyle(fontSize: 32)),
+                  child: Center(
+                    child: Text(
+                      'IMG',
+                      style: GoogleFonts.pressStart2p(
+                        fontSize: 10,
+                        color: VibeLabTheme.textHint,
+                      ),
+                    ),
                   ),
                 ),
               )
@@ -212,7 +233,7 @@ class _GalleryCardState extends State<_GalleryCard> {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        Colors.black.withOpacity(0.8),
+                        Colors.black.withOpacity(0.85),
                       ],
                     ),
                   ),
@@ -222,21 +243,20 @@ class _GalleryCardState extends State<_GalleryCard> {
                     children: [
                       Text(
                         widget.vibe.posterHeadline,
-                        style: GoogleFonts.spaceGrotesk(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
+                        style: GoogleFonts.pressStart2p(
+                          fontSize: 9,
                           color: Colors.white,
+                          height: 1.4,
                         ),
-                        maxLines: 1,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 4),
                       Text(
-                        widget.vibe.moodTag,
-                        style: GoogleFonts.inter(
-                          fontSize: 10,
-                          color: Colors.white.withOpacity(0.6),
-                          fontWeight: FontWeight.w500,
+                        widget.vibe.moodTag.toUpperCase(),
+                        style: GoogleFonts.pressStart2p(
+                          fontSize: 7,
+                          color: VibeLabTheme.vibeLime,
                         ),
                       ),
                     ],
@@ -258,7 +278,7 @@ class _LoadingGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(16),
       child: MasonryGridView.count(
         crossAxisCount: 2,
         mainAxisSpacing: 12,
@@ -272,7 +292,7 @@ class _LoadingGrid extends StatelessWidget {
               height: index.isEven ? 200 : 160,
               decoration: BoxDecoration(
                 color: VibeLabTheme.cosmicInkLighter,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(4),
               ),
             ),
           );
@@ -283,7 +303,7 @@ class _LoadingGrid extends StatelessWidget {
 }
 
 // ----------------------------------------------------------
-// Empty gallery state
+// Empty state
 // ----------------------------------------------------------
 class _EmptyState extends StatelessWidget {
   @override
@@ -292,28 +312,73 @@ class _EmptyState extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text('🎨', style: TextStyle(fontSize: 52)),
-          const SizedBox(height: 16),
-          Text(
-            'No vibes saved yet',
-            style: GoogleFonts.spaceGrotesk(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: VibeLabTheme.textPrimary,
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: VibeLabTheme.borderNormal,
+                width: 2,
+              ),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Center(
+              child: Text(
+                'EMPTY',
+                style: GoogleFonts.pressStart2p(
+                  fontSize: 8,
+                  color: VibeLabTheme.textHint,
+                ),
+              ),
             ),
           ),
-          const SizedBox(height: 8),
+
+          const SizedBox(height: 24),
+
           Text(
-            'Generate a vibe and save it to see it here.',
+            'NO VIBES YET',
+            style: GoogleFonts.pressStart2p(
+              fontSize: 14,
+              color: VibeLabTheme.textPrimary,
+              height: 1.5,
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          Text(
+            'Generate a vibe and save it.',
             style: GoogleFonts.inter(
               fontSize: 14,
               color: VibeLabTheme.textSecondary,
             ),
           ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Create Your First Vibe 🧪'),
+
+          const SizedBox(height: 28),
+
+          GestureDetector(
+            onTap: () => Navigator.of(context).pop(),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 14,
+              ),
+              decoration: BoxDecoration(
+                color: VibeLabTheme.vibeLime,
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(
+                  color: VibeLabTheme.vibeLime,
+                  width: 2,
+                ),
+              ),
+              child: Text(
+                'CREATE FIRST VIBE',
+                style: GoogleFonts.pressStart2p(
+                  fontSize: 9,
+                  color: VibeLabTheme.textDark,
+                ),
+              ),
+            ),
           ),
         ],
       ),
