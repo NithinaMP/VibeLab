@@ -170,100 +170,108 @@ class _GalleryCardState extends State<_GalleryCard> {
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4),
-          border: Border.all(
-            color: _hovered
-                ? VibeLabTheme.vibeLime
-                : VibeLabTheme.borderSubtle,
-            width: _hovered ? 2 : 1,
+    return GestureDetector(
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (_) => _ImageViewerDialog(vibe: widget.vibe),
+        );
+      },
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _hovered = true),
+        onExit: (_) => setState(() => _hovered = false),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(4),
+            border: Border.all(
+              color: _hovered
+                  ? VibeLabTheme.vibeLime
+                  : VibeLabTheme.borderSubtle,
+              width: _hovered ? 2 : 1,
+            ),
           ),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(4),
-          child: Stack(
-            children: [
-              widget.vibe.imageUrl != null
-                  ? CachedNetworkImage(
-                imageUrl: widget.vibe.imageUrl!,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                placeholder: (context, url) => Shimmer.fromColors(
-                  baseColor: VibeLabTheme.cosmicInkLighter,
-                  highlightColor: VibeLabTheme.cosmicInkLight,
-                  child: Container(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: Stack(
+              children: [
+                widget.vibe.imageUrl != null
+                    ? CachedNetworkImage(
+                  imageUrl: widget.vibe.imageUrl!,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  placeholder: (context, url) => Shimmer.fromColors(
+                    baseColor: VibeLabTheme.cosmicInkLighter,
+                    highlightColor: VibeLabTheme.cosmicInkLight,
+                    child: Container(
+                      height: 180,
+                      color: VibeLabTheme.cosmicInkLighter,
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => Container(
                     height: 180,
                     color: VibeLabTheme.cosmicInkLighter,
-                  ),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  height: 180,
-                  color: VibeLabTheme.cosmicInkLighter,
-                  child: Center(
-                    child: Text(
-                      'IMG',
-                      style: GoogleFonts.pressStart2p(
-                        fontSize: 10,
-                        color: VibeLabTheme.textHint,
+                    child: Center(
+                      child: Text(
+                        'IMG',
+                        style: GoogleFonts.pressStart2p(
+                          fontSize: 10,
+                          color: VibeLabTheme.textHint,
+                        ),
                       ),
                     ),
                   ),
+                )
+                    : Container(
+                  height: 180,
+                  color: VibeLabTheme.cosmicInkLighter,
                 ),
-              )
-                  : Container(
-                height: 180,
-                color: VibeLabTheme.cosmicInkLighter,
-              ),
-
-              // Gradient overlay
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withOpacity(0.85),
+      
+                // Gradient overlay
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.85),
+                        ],
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          widget.vibe.posterHeadline,
+                          style: GoogleFonts.pressStart2p(
+                            fontSize: 9,
+                            color: Colors.white,
+                            height: 1.4,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          widget.vibe.moodTag.toUpperCase(),
+                          style: GoogleFonts.pressStart2p(
+                            fontSize: 7,
+                            color: VibeLabTheme.vibeLime,
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        widget.vibe.posterHeadline,
-                        style: GoogleFonts.pressStart2p(
-                          fontSize: 9,
-                          color: Colors.white,
-                          height: 1.4,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        widget.vibe.moodTag.toUpperCase(),
-                        style: GoogleFonts.pressStart2p(
-                          fontSize: 7,
-                          color: VibeLabTheme.vibeLime,
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -377,6 +385,122 @@ class _EmptyState extends StatelessWidget {
                   fontSize: 9,
                   color: VibeLabTheme.textDark,
                 ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+class _ImageViewerDialog extends StatelessWidget {
+  final VibeBundle vibe;
+  const _ImageViewerDialog({required this.vibe});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.all(16),
+      child: Stack(
+        children: [
+          // Full image
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: CachedNetworkImage(
+              imageUrl: vibe.imageUrl ?? '',
+              fit: BoxFit.contain,
+              placeholder: (context, url) => Container(
+                height: 300,
+                color: VibeLabTheme.cosmicInkLighter,
+                child: const Center(
+                  child: CircularProgressIndicator(
+                    color: VibeLabTheme.vibeLime,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Close button
+          Positioned(
+            top: 8,
+            right: 8,
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: VibeLabTheme.cosmicInk,
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(
+                    color: VibeLabTheme.borderNormal,
+                    width: 2,
+                  ),
+                ),
+                child: Text(
+                  'X',
+                  style: GoogleFonts.pressStart2p(
+                    fontSize: 10,
+                    color: VibeLabTheme.textPrimary,
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Details at bottom
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(4),
+                  bottomRight: Radius.circular(4),
+                ),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withOpacity(0.9),
+                  ],
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    vibe.posterHeadline,
+                    style: GoogleFonts.pressStart2p(
+                      fontSize: 14,
+                      color: Colors.white,
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    vibe.posterSubheadline,
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      color: Colors.white.withOpacity(0.7),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    vibe.moodTag.toUpperCase(),
+                    style: GoogleFonts.pressStart2p(
+                      fontSize: 8,
+                      color: VibeLabTheme.vibeLime,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

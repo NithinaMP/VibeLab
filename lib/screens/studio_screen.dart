@@ -1,10 +1,14 @@
 // ============================================================
 // VibeLab — studio_screen.dart (Complete - UI Refresh Applied)
 // ============================================================
+import 'package:flutter/foundation.dart';
+import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -27,6 +31,68 @@ class _StudioScreenState extends State<StudioScreen> {
   final GlobalKey _repaintKey = GlobalKey();
   bool _isExporting = false;
 
+  // Future<void> _exportAsPng() async {
+  //   setState(() => _isExporting = true);
+  //
+  //   try {
+  //     final boundary = _repaintKey.currentContext?.findRenderObject()
+  //     as RenderRepaintBoundary?;
+  //
+  //     if (boundary == null) throw Exception('Could not find render boundary');
+  //
+  //     final ui.Image image = await boundary.toImage(pixelRatio: 2.0);
+  //     final ByteData? byteData =
+  //     await image.toByteData(format: ui.ImageByteFormat.png);
+  //
+  //     if (byteData == null) throw Exception('Could not convert to PNG');
+  //
+  //     final bytes = byteData.buffer.asUint8List();
+  //     final blob = html.Blob([bytes], 'image/png');
+  //     final url = html.Url.createObjectUrlFromBlob(blob);
+  //     final anchor = html.document.createElement('a') as html.AnchorElement
+  //       ..href = url
+  //       ..style.display = 'none'
+  //       ..download = 'vibelab_${DateTime.now().millisecondsSinceEpoch}.png';
+  //
+  //     html.document.body!.children.add(anchor);
+  //     anchor.click();
+  //     html.document.body!.children.remove(anchor);
+  //     html.Url.revokeObjectUrl(url);
+  //
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text(
+  //             'Poster downloaded!',
+  //             style: GoogleFonts.pressStart2p(
+  //               fontSize: 9,
+  //               color: VibeLabTheme.textDark,
+  //             ),
+  //           ),
+  //           backgroundColor: VibeLabTheme.vibeLime,
+  //           behavior: SnackBarBehavior.floating,
+  //           shape: RoundedRectangleBorder(
+  //             borderRadius: BorderRadius.circular(4),
+  //           ),
+  //         ),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         SnackBar(
+  //           content: Text(
+  //             'Export failed: $e',
+  //             style: GoogleFonts.inter(color: Colors.white),
+  //           ),
+  //           backgroundColor: Colors.red.shade800,
+  //         ),
+  //       );
+  //     }
+  //   } finally {
+  //     if (mounted) setState(() => _isExporting = false);
+  //   }
+  // }
   Future<void> _exportAsPng() async {
     setState(() => _isExporting = true);
 
@@ -42,24 +108,47 @@ class _StudioScreenState extends State<StudioScreen> {
 
       if (byteData == null) throw Exception('Could not convert to PNG');
 
-      final bytes = byteData.buffer.asUint8List();
-      final blob = html.Blob([bytes], 'image/png');
-      final url = html.Url.createObjectUrlFromBlob(blob);
-      final anchor = html.document.createElement('a') as html.AnchorElement
-        ..href = url
-        ..style.display = 'none'
-        ..download = 'vibelab_${DateTime.now().millisecondsSinceEpoch}.png';
+      // Platform-safe download
+      if (kIsWeb) {
+        // Web browser download
+        final bytes = byteData.buffer.asUint8List();
+        final blob = html.Blob([bytes], 'image/png');
+        final url = html.Url.createObjectUrlFromBlob(blob);
+        final anchor = html.document.createElement('a') as html.AnchorElement
+          ..href = url
+          ..style.display = 'none'
+          ..download = 'vibelab_${DateTime.now().millisecondsSinceEpoch}.png';
+        html.document.body!.children.add(anchor);
+        anchor.click();
+        html.document.body!.children.remove(anchor);
+        html.Url.revokeObjectUrl(url);
+      } else {
+        // Mobile — save to gallery using path_provider
+        final directory = await getApplicationDocumentsDirectory();
+        final filePath =
+            '${directory.path}/vibelab_${DateTime.now().millisecondsSinceEpoch}.png';
+        final file = File(filePath);
+        await file.writeAsBytes(byteData.buffer.asUint8List());
 
-      html.document.body!.children.add(anchor);
-      anchor.click();
-      html.document.body!.children.remove(anchor);
-      html.Url.revokeObjectUrl(url);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'Saved to: $filePath',
+                style: GoogleFonts.inter(fontSize: 11),
+              ),
+              backgroundColor: VibeLabTheme.vibeLime,
+            ),
+          );
+        }
+        return;
+      }
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Poster downloaded!',
+              'POSTER DOWNLOADED',
               style: GoogleFonts.pressStart2p(
                 fontSize: 9,
                 color: VibeLabTheme.textDark,
@@ -77,10 +166,7 @@ class _StudioScreenState extends State<StudioScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              'Export failed: $e',
-              style: GoogleFonts.inter(color: Colors.white),
-            ),
+            content: Text('Export failed: $e'),
             backgroundColor: Colors.red.shade800,
           ),
         );
@@ -89,7 +175,6 @@ class _StudioScreenState extends State<StudioScreen> {
       if (mounted) setState(() => _isExporting = false);
     }
   }
-
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<VibeProvider>();
@@ -286,7 +371,14 @@ class _ControlsPanel extends StatelessWidget {
             isSaved: vibe.isSaved,
             onExport: onExport,
             onSave: () => provider.saveToGallery(),
+            // onNewVibe: () {
+            //   Navigator.of(context).pop();
+            //   Future.delayed(const Duration(milliseconds: 300), () {
+            //     provider.resetToHome();
+            //   });
+            // },
             onNewVibe: () {
+              final provider = context.read<VibeProvider>();
               Navigator.of(context).pop();
               Future.delayed(const Duration(milliseconds: 300), () {
                 provider.resetToHome();
@@ -596,10 +688,17 @@ class _StudioTopBar extends StatelessWidget {
       child: Row(
         children: [
           GestureDetector(
+            // onTap: () {
+            //   Navigator.of(context).pop();
+            //   Future.delayed(const Duration(milliseconds: 300), () {
+            //     context.read<VibeProvider>().resetToHome();
+            //   });
+            // },
             onTap: () {
+              final provider = context.read<VibeProvider>();
               Navigator.of(context).pop();
               Future.delayed(const Duration(milliseconds: 300), () {
-                context.read<VibeProvider>().resetToHome();
+                provider.resetToHome();
               });
             },
             child: Container(

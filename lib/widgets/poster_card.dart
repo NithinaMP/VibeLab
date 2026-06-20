@@ -43,6 +43,8 @@ class PosterCard extends StatelessWidget {
                   ? CachedNetworkImage(
                 imageUrl: vibe.imageUrl!,
                 fit: BoxFit.cover,
+                httpHeaders: const {'Connection': 'keep-alive'},
+                fadeInDuration: const Duration(milliseconds: 300),
                 placeholder: (context, url) => _ImageShimmer(),
                 errorWidget: (context, url, error) => _ImageError(),
               )

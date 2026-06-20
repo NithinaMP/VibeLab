@@ -25,8 +25,11 @@ class VibeLabConstants {
       'https://image.pollinations.ai/prompt';
   static const String pollinationsReferrer = 'vibelab.app';
 
-  static const int imageWidth = 1024;
-  static const int imageHeight = 1024;
+  // static const int imageWidth = 1024;
+  // static const int imageHeight = 1024;
+  // Change image dimensions in constants.dart for faster generation
+  static const int imageWidth = 768;   // Was 1024
+  static const int imageHeight = 768;  // Was 1024
 
   // ----------------------------------------------------------
   // FIREBASE COLLECTIONS

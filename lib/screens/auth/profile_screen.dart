@@ -25,14 +25,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late TextEditingController _nameController;
 
   @override
+  // void initState() {
+  //   super.initState();
+  //   final auth = context.read<AuthProvider>();
+  //   _nameController = TextEditingController(text: auth.displayName);
+  //   // Refresh stats when page opens
+  //   auth.loadUserStats();
+  // }
   void initState() {
     super.initState();
     final auth = context.read<AuthProvider>();
     _nameController = TextEditingController(text: auth.displayName);
-    // Refresh stats when page opens
-    auth.loadUserStats();
+    // Use addPostFrameCallback — waits until build is complete
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      auth.loadUserStats();
+    });
   }
-
   @override
   void dispose() {
     _nameController.dispose();
