@@ -167,6 +167,10 @@ class VibeProvider extends ChangeNotifier {
     _currentVibe = _currentVibe!.copyWith(imageUrl: newImageUrl);
     notifyListeners();
   }
+  void updateCurrentVibe(VibeBundle updatedVibe) {
+    _currentVibe = updatedVibe;
+    notifyListeners();
+  }
 
   // ----------------------------------------------------------
   // resetToHome

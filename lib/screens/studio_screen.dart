@@ -3,6 +3,7 @@
 // ============================================================
 import 'package:flutter/foundation.dart';
 import 'dart:io';
+import '../widgets/editable_copy_details.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -364,7 +365,13 @@ class _ControlsPanel extends StatelessWidget {
               moodTag: vibe.moodTag,
             ),
           const SizedBox(height: 20),
-          _CopyDetails(vibe: vibe),
+          // _CopyDetails(vibe: vibe),
+          EditableCopyDetails(
+            vibe: vibe,
+            onVibeUpdated: (updatedVibe) {
+              provider.updateCurrentVibe(updatedVibe);
+            },
+          ),
           const SizedBox(height: 20),
           _ActionButtons(
             isExporting: isExporting,
