@@ -385,13 +385,9 @@ class _ControlsPanel extends StatelessWidget {
             //   });
             // },
             onNewVibe: () {
-              final provider = context.read<VibeProvider>();
+              context.read<VibeProvider>().resetToHome();
               Navigator.of(context).pop();
-              Future.delayed(const Duration(milliseconds: 300), () {
-                provider.resetToHome();
-              });
-            },
-          ),
+            },          ),
         ],
       ),
     );
@@ -702,11 +698,8 @@ class _StudioTopBar extends StatelessWidget {
             //   });
             // },
             onTap: () {
-              final provider = context.read<VibeProvider>();
+              context.read<VibeProvider>().resetToHome();
               Navigator.of(context).pop();
-              Future.delayed(const Duration(milliseconds: 300), () {
-                provider.resetToHome();
-              });
             },
             child: Container(
               padding: const EdgeInsets.symmetric(

@@ -27,13 +27,14 @@ class HomeScreen extends StatelessWidget {
         if (provider.state == VibeState.success &&
             provider.currentVibe != null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!context.mounted) return;
             Navigator.of(context).push(
               PageRouteBuilder(
                 pageBuilder: (_, animation, __) => const StudioScreen(),
                 transitionsBuilder: (_, animation, __, child) {
                   return FadeTransition(opacity: animation, child: child);
                 },
-                transitionDuration: const Duration(milliseconds: 600),
+                transitionDuration: const Duration(milliseconds: 400),
               ),
             );
           });
